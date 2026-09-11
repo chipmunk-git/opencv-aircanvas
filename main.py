@@ -18,6 +18,11 @@ colors = [
 color_index = 0
 draw_color = colors[color_index]
 
+# 선 굵기
+thicknesses = [3, 5, 10]
+thickness_index = 1
+line_thickness = thicknesses[thickness_index]
+
 if cap.isOpened():
     print("카메라가 잡혔어요!")
 
@@ -71,7 +76,7 @@ if cap.isOpened():
                         previous_point,
                         current_point,
                         draw_color,
-                        5
+                        line_thickness
                     )
 
                 previous_point = current_point
@@ -112,6 +117,10 @@ if cap.isOpened():
         if key == ord('p') or key == ord('P'):  # P 키
             color_index = (color_index + 1) % len(colors)
             draw_color = colors[color_index]
+
+        if key == ord('t') or key == ord('T'):  # T 키
+            thickness_index = (thickness_index + 1) % len(thicknesses)
+            line_thickness = thicknesses[thickness_index]
 
 else:
     print("카메라가 안 잡혔어요ㅠㅠ")
