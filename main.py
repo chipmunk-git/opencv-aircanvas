@@ -4,6 +4,9 @@ import numpy as np
 # 웹캠 열기
 cap = cv2.VideoCapture(0)
 
+previous_point = None
+canvas = None
+
 if cap.isOpened():
     print("카메라가 잡혔어요!")
 
@@ -12,6 +15,10 @@ if cap.isOpened():
 
         if not ret:
             break
+
+        # 그린 선을 저장할 캔버스 만들기
+        if canvas is None:
+            canvas = np.zeros_like(frame)
 
         # 웹캠 이미지를 HSV로 변환
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -44,19 +51,41 @@ if cap.isOpened():
                 center_x = int(moments["m10"] / moments["m00"])
                 center_y = int(moments["m01"] / moments["m00"])
 
-                # 중심점 표시
+                current_point = (center_x, center_y)
+
+                # 이전 중심점과 현재 중심점을 선으로 연결
+                if previous_point is not None:
+                    cv2.line(
+                        canvas,
+                        previous_point,
+                        current_point,
+                        (0, 255, 0),
+                        5
+                    )
+
+                previous_point = current_point
+
+                # 현재 중심점 표시
                 cv2.circle(
                     frame,
-                    (center_x, center_y),
+                    current_point,
                     10,
                     (0, 255, 0),
                     -1
                 )
+            else:
+                previous_point = None
+
+        else:
+            previous_point = None
 
         # 빨간색으로 검출된 부분만 남기기
         result = cv2.bitwise_and(frame, frame, mask=mask)
 
-        cv2.imshow("Air Canvas", frame)
+        # 웹캠 화면과 그린 선 합치기
+        air_canvas = cv2.add(frame, canvas)
+
+        cv2.imshow("Air Canvas", air_canvas)
         cv2.imshow("Red Mask", mask)
         cv2.imshow("Red Detection", result)
 
