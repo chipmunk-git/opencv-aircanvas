@@ -7,6 +7,17 @@ cap = cv2.VideoCapture(0)
 previous_point = None
 canvas = None
 
+# 그리기 색상
+colors = [
+    (0, 255, 0),    # 초록
+    (255, 0, 0),    # 파랑
+    (0, 0, 255),    # 빨강
+    (0, 255, 255)   # 노랑
+]
+
+color_index = 0
+draw_color = colors[color_index]
+
 if cap.isOpened():
     print("카메라가 잡혔어요!")
 
@@ -59,7 +70,7 @@ if cap.isOpened():
                         canvas,
                         previous_point,
                         current_point,
-                        (0, 255, 0),
+                        draw_color,
                         5
                     )
 
@@ -70,7 +81,7 @@ if cap.isOpened():
                     frame,
                     current_point,
                     10,
-                    (0, 255, 0),
+                    draw_color,
                     -1
                 )
             else:
@@ -97,6 +108,10 @@ if cap.isOpened():
         if key == ord('c') or key == ord('C'):  # C 키
             canvas = np.zeros_like(frame)
             previous_point = None
+
+        if key == ord('p') or key == ord('P'):  # P 키
+            color_index = (color_index + 1) % len(colors)
+            draw_color = colors[color_index]
 
 else:
     print("카메라가 안 잡혔어요ㅠㅠ")
