@@ -28,6 +28,31 @@ if cap.isOpened():
         mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
         mask = cv2.bitwise_or(mask1, mask2)
 
+        # 빨간색 영역의 윤곽선 찾기
+        contours, _ = cv2.findContours(
+            mask,
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE
+        )
+
+        # 가장 큰 빨간색 영역의 중심점 찾기
+        if contours:
+            contour = max(contours, key=cv2.contourArea)
+            moments = cv2.moments(contour)
+
+            if moments["m00"] != 0:
+                center_x = int(moments["m10"] / moments["m00"])
+                center_y = int(moments["m01"] / moments["m00"])
+
+                # 중심점 표시
+                cv2.circle(
+                    frame,
+                    (center_x, center_y),
+                    10,
+                    (0, 255, 0),
+                    -1
+                )
+
         # 빨간색으로 검출된 부분만 남기기
         result = cv2.bitwise_and(frame, frame, mask=mask)
 
