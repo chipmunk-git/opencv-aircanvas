@@ -89,8 +89,14 @@ if cap.isOpened():
         cv2.imshow("Red Mask", mask)
         cv2.imshow("Red Detection", result)
 
-        if cv2.waitKey(30) == 27:  # ESC 키
+        key = cv2.waitKey(30)
+
+        if key == 27:  # ESC 키
             break
+
+        if key == ord('c') or key == ord('C'):  # C 키
+            canvas = np.zeros_like(frame)
+            previous_point = None
 
 else:
     print("카메라가 안 잡혔어요ㅠㅠ")
